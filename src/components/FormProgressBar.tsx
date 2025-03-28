@@ -1,14 +1,16 @@
 
 import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 
 interface FormProgressBarProps {
   progress: number;
   label?: string;
+  className?: string;
 }
 
-export default function FormProgressBar({ progress, label }: FormProgressBarProps) {
+export default function FormProgressBar({ progress, label, className }: FormProgressBarProps) {
   return (
-    <div className="w-full space-y-1">
+    <div className={cn("w-full space-y-1", className)}>
       <div className="flex justify-between text-xs text-muted-foreground">
         <span>Formular-Fortschritt</span>
         <span>{Math.round(progress)}%</span>

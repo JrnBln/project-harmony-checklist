@@ -1,13 +1,13 @@
 
 import { useState, useEffect } from 'react';
 
-type FieldValue = string | number | boolean | undefined | null;
-
-interface FieldConfig {
+export interface FieldConfig {
   name: string;
   required?: boolean;
   validator?: (value: FieldValue) => boolean;
 }
+
+type FieldValue = string | number | boolean | undefined | null;
 
 export function useFormProgress(fields: FieldConfig[], formData: Record<string, FieldValue>) {
   const [progress, setProgress] = useState(0);

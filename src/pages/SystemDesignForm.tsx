@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,8 +24,9 @@ import {
   ProjectExtended 
 } from "@/types/supabase";
 import FormProgressBar from "@/components/FormProgressBar";
-import { useFormProgress, FormField } from "@/hooks/useFormProgress";
+import { useFormProgress, FieldConfig } from "@/hooks/useFormProgress";
 import ProjectPhaseNav from "@/components/ProjectPhaseNav";
+import FormActions from "@/components/technical-form/FormActions";
 
 const heatPumpTypes: HeatPumpType[] = ["Luft/Wasser", "Sole/Wasser", "Wasser/Wasser"];
 const heatSources: HeatSource[] = ["Luft", "Erdkollektor", "Erdsonde", "Grundwasser", "Abwasser", "Abwärme"];
@@ -32,7 +34,7 @@ const electricityTariffs: ElectricityTariff[] = ["HT/NT", "PV", "Direktverbrauch
 const permissionStatuses: PermissionStatus[] = ["Ja", "Nein", "Unklar"];
 
 // Define form fields for progress calculation
-const formFields: FormField[] = [
+const formFields: FieldConfig[] = [
   { name: "heat_pump_type", required: true },
   { name: "heating_capacity_planned", required: true },
   { name: "cop" },
@@ -64,7 +66,7 @@ export default function SystemDesignForm() {
   });
 
   // Calculate form progress
-  const progress = useFormProgress(formData, formFields);
+  const progress = useFormProgress(formFields, formData);
 
   useEffect(() => {
     if (projectId) {
@@ -190,6 +192,10 @@ export default function SystemDesignForm() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCancel = () => {
+    navigate(`/projects/${formData.project_id}`);
   };
 
   if (!projectId) {
@@ -367,19 +373,7 @@ export default function SystemDesignForm() {
               </Select>
             </div>
 
-            <div className="flex justify-end space-x-2 mt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate(`/projects/${formData.project_id}`)}
-                disabled={loading}
-              >
-                Zurück zum Projekt
-              </Button>
-              <Button type="submit" disabled={loading}>
-                {loading ? "Speichern..." : "Speichern"}
-              </Button>
-            </div>
+            <FormActions loading={loading} onCancel={handleCancel} />
           </form>
         </CardContent>
       </Card>
