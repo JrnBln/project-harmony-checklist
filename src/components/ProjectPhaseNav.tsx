@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Clipboard, Wrench, Calculator, HardHat, Activity } from "lucide-react";
+import { ArrowLeft, Clipboard, Wrench, Calculator, HardHat, Activity, CheckSquare } from "lucide-react";
 
 interface ProjectPhaseNavProps {
   projectId: string;
@@ -30,7 +30,9 @@ export default function ProjectPhaseNav({ projectId, activePhase }: ProjectPhase
         navigate(`/projects/${projectId}/operation`);
         break;
       case "checklist":
-        navigate(`/projects/${projectId}/checklist`);
+        // Da wir aktuell keine dedizierte Checklisten-Seite haben, 
+        // leiten wir auf die Übersicht weiter, die bereits die Checkliste enthält
+        navigate(`/projects/${projectId}`);
         break;
     }
   };
@@ -48,7 +50,7 @@ export default function ProjectPhaseNav({ projectId, activePhase }: ProjectPhase
       </Button>
       
       <Tabs 
-        defaultValue={activePhase} 
+        value={activePhase} 
         onValueChange={handleTabChange}
         className="w-full"
       >
@@ -74,7 +76,7 @@ export default function ProjectPhaseNav({ projectId, activePhase }: ProjectPhase
             <span className="hidden sm:inline">Betrieb</span>
           </TabsTrigger>
           <TabsTrigger value="checklist" className="flex items-center gap-1">
-            <Clipboard className="h-4 w-4" />
+            <CheckSquare className="h-4 w-4" />
             <span className="hidden sm:inline">Checkliste</span>
           </TabsTrigger>
         </TabsList>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
@@ -32,20 +31,16 @@ const ProjectDetail: React.FC = () => {
   const [categoryFilter, setCategoryFilter] = useState<ChecklistCategory | 'Alle'>('Alle');
   const [statusFilter, setStatusFilter] = useState<ChecklistStatus | 'Alle'>('Alle');
   
-  // Find the project
   const project = projects.find(p => p.id === projectId);
   
-  // Get project checklist items
   const projectChecklistItems = checklistItems.filter(item => item.projectId === projectId);
   
-  // Apply filters
   const filteredItems = projectChecklistItems.filter(item => {
     const matchesCategory = categoryFilter === 'Alle' || item.category === categoryFilter;
     const matchesStatus = statusFilter === 'Alle' || item.status === statusFilter;
     return matchesCategory && matchesStatus;
   });
   
-  // Categorize items
   const itemsByCategory: Record<ChecklistCategory, typeof filteredItems> = {
     'Projektstart': [],
     'Planung': [],
@@ -71,7 +66,6 @@ const ProjectDetail: React.FC = () => {
     setExpandedItems(newExpandedItems);
   };
   
-  // If project not found
   if (!project) {
     return (
       <div className="container mx-auto px-4 py-8 text-center">
@@ -86,10 +80,8 @@ const ProjectDetail: React.FC = () => {
   
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Project Phase Navigation */}
-      <ProjectPhaseNav projectId={projectId} activePhase="overview" />
+      <ProjectPhaseNav projectId={projectId || ''} activePhase="overview" />
       
-      {/* Project Header */}
       <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
         <div className="flex flex-col lg:flex-row">
           <div className="flex-grow">
@@ -149,7 +141,6 @@ const ProjectDetail: React.FC = () => {
         </div>
       </div>
       
-      {/* Checklist Filters */}
       <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
         <h2 className="text-xl font-semibold mb-4">Projektcheckliste</h2>
         
@@ -227,7 +218,6 @@ const ProjectDetail: React.FC = () => {
         </div>
       </div>
       
-      {/* Checklist Items */}
       {filteredItems.length > 0 ? (
         <div className="space-y-6">
           {categoryFilter === 'Alle' ? (

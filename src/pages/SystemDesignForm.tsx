@@ -1,4 +1,3 @@
-
 import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -54,7 +53,7 @@ export default function SystemDesignForm() {
       </div>
     );
   }
-
+  
   return (
     <div className="container mx-auto p-4">
       {project && <ProjectPhaseNav projectId={project.id} activePhase="design" />}

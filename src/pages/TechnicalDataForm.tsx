@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -9,7 +8,6 @@ import { TechnicalData, ProjectExtended } from "@/types/supabase";
 import ProjectPhaseNav from "@/components/ProjectPhaseNav";
 import FormProgressBar from "@/components/FormProgressBar";
 
-// Import form section components
 import ProjectSelectSection from "@/components/technical-form/ProjectSelectSection";
 import BuildingDataSection from "@/components/technical-form/BuildingDataSection";
 import HeatingSystemSection from "@/components/technical-form/HeatingSystemSection";
@@ -39,7 +37,6 @@ export default function TechnicalDataForm() {
     notes: "",
   });
 
-  // Fetch projects for the dropdown
   const { data: projects = [] } = useQuery({
     queryKey: ["projects"],
     queryFn: async () => {
@@ -53,14 +50,12 @@ export default function TechnicalDataForm() {
     },
   });
 
-  // Fetch technical data if projectId is provided
   useEffect(() => {
     if (projectId) {
       fetchTechnicalData();
     }
   }, [projectId]);
 
-  // Calculate form progress
   const formFields = [
     { name: "project_id", required: true },
     { name: "heating_load_calculated" },
@@ -75,7 +70,7 @@ export default function TechnicalDataForm() {
     { name: "outdoor_unit_space_available" },
     { name: "drill_access" },
   ];
-  
+
   const progress = useFormProgress(formFields, formData);
 
   const fetchTechnicalData = async () => {
@@ -135,7 +130,6 @@ export default function TechnicalDataForm() {
         throw new Error("Projekt muss ausgewählt werden");
       }
 
-      // Check if technical data already exists for this project
       const { data: existingData, error: checkError } = await supabase
         .from("technical_data")
         .select("id")
@@ -147,13 +141,11 @@ export default function TechnicalDataForm() {
       let response;
 
       if (existingData) {
-        // Update existing record
         response = await supabase
           .from("technical_data")
           .update(formData)
           .eq("id", existingData.id);
       } else {
-        // Insert new record
         response = await supabase
           .from("technical_data")
           .insert([formData])
@@ -167,7 +159,6 @@ export default function TechnicalDataForm() {
         description: "Technische Daten erfolgreich gespeichert",
       });
 
-      // Navigate back to project detail page
       navigate(`/projects/${formData.project_id}`);
     } catch (error) {
       console.error("Error saving technical data:", error);
@@ -183,9 +174,7 @@ export default function TechnicalDataForm() {
 
   return (
     <div className="container mx-auto p-4">
-      {projectId && (
-        <ProjectPhaseNav projectId={projectId} activePhase="technical" />
-      )}
+      {projectId && <ProjectPhaseNav projectId={projectId} activePhase="technical" />}
       
       <Card className="max-w-3xl mx-auto">
         <CardHeader>
@@ -195,7 +184,6 @@ export default function TechnicalDataForm() {
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Project selection */}
             <ProjectSelectSection
               projectId={formData.project_id || ""}
               projects={projects}
@@ -203,7 +191,6 @@ export default function TechnicalDataForm() {
               handleSelectChange={handleSelectChange}
             />
             
-            {/* Building data section */}
             <BuildingDataSection 
               heatingLoadCalculated={formData.heating_load_calculated}
               heatDemandEstimated={formData.heat_demand_estimated}
@@ -213,7 +200,6 @@ export default function TechnicalDataForm() {
               handleSelectChange={handleSelectChange}
             />
             
-            {/* Heating system section */}
             <HeatingSystemSection
               bufferTankAvailable={formData.buffer_tank_available || false}
               hotWaterIntegrated={formData.hot_water_integrated || false}
@@ -223,7 +209,6 @@ export default function TechnicalDataForm() {
               handleCheckboxChange={handleCheckboxChange}
             />
             
-            {/* Space and access section */}
             <SpaceAndAccessSection
               indoorUnitSpaceAvailable={formData.indoor_unit_space_available || false}
               outdoorUnitSpaceAvailable={formData.outdoor_unit_space_available || false}
@@ -232,13 +217,11 @@ export default function TechnicalDataForm() {
               handleSelectChange={handleSelectChange}
             />
             
-            {/* Notes section */}
             <NotesSection
               notes={formData.notes}
               handleChange={handleChange}
             />
             
-            {/* Form actions */}
             <FormActions
               loading={loading}
               onCancel={() => navigate(projectId ? `/projects/${projectId}` : "/projects")}
