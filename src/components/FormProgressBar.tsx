@@ -3,17 +3,20 @@ import { Progress } from "@/components/ui/progress";
 
 interface FormProgressBarProps {
   progress: number;
-  className?: string;
+  label?: string;
 }
 
-export default function FormProgressBar({ progress, className = "" }: FormProgressBarProps) {
+export default function FormProgressBar({ progress, label }: FormProgressBarProps) {
   return (
-    <div className={`space-y-2 ${className}`}>
-      <div className="flex justify-between items-center">
-        <span className="text-sm font-medium">Formular-Fortschritt</span>
-        <span className="text-sm font-medium">{progress}%</span>
+    <div className="w-full space-y-1">
+      <div className="flex justify-between text-xs text-muted-foreground">
+        <span>Formular-Fortschritt</span>
+        <span>{Math.round(progress)}%</span>
       </div>
       <Progress value={progress} className="h-2" />
+      {label && (
+        <p className="text-xs text-muted-foreground text-center mt-1">{label}</p>
+      )}
     </div>
   );
 }

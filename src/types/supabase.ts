@@ -1,3 +1,4 @@
+
 export type BuildingType = 'EFH' | 'MFH' | 'Gewerbe' | 'Industrie';
 export type RenovationStatus = 'unsaniert' | 'teilsaniert' | 'vollsaniert';
 export type EnergySource = 'Gas' | 'Öl' | 'Fernwärme' | 'Strom' | 'Sonstiges';
@@ -7,7 +8,9 @@ export type HeatPumpType = 'Luft/Wasser' | 'Sole/Wasser' | 'Wasser/Wasser';
 export type HeatSource = 'Luft' | 'Erdkollektor' | 'Erdsonde' | 'Grundwasser' | 'Abwasser' | 'Abwärme';
 export type ElectricityTariff = 'HT/NT' | 'PV' | 'Direktverbrauch' | 'Dynamisch';
 export type PermissionStatus = 'Ja' | 'Nein' | 'Unklar';
+export type UserRole = 'Projektleiter' | 'Techniker' | 'Bauleitung' | 'Betreiber' | 'Kunde';
 
+// Project entity - Central entity with basic data
 export interface ProjectExtended {
   id: string;
   name: string;
@@ -28,6 +31,7 @@ export interface ProjectExtended {
   updated_at: string;
 }
 
+// Technical data entity - 1:1 relationship with Project
 export interface TechnicalData {
   id: string;
   project_id: string;
@@ -42,11 +46,12 @@ export interface TechnicalData {
   indoor_unit_space_available: boolean;
   outdoor_unit_space_available: boolean;
   drill_access?: DrillAccess;
-  notes?: string; // Added notes field
+  notes?: string;
   created_at: string;
   updated_at: string;
 }
 
+// System design entity - 1:1 relationship with Project
 export interface SystemDesign {
   id: string;
   project_id: string;
@@ -63,6 +68,7 @@ export interface SystemDesign {
   updated_at: string;
 }
 
+// Implementation entity - 1:1 relationship with Project
 export interface Implementation {
   id: string;
   project_id: string;
@@ -78,6 +84,7 @@ export interface Implementation {
   updated_at: string;
 }
 
+// Operation entity - 1:1 relationship with Project
 export interface Operation {
   id: string;
   project_id: string;
@@ -85,6 +92,31 @@ export interface Operation {
   monitoring_active: boolean;
   spf_realized_first_year?: number;
   fault_messages?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Checklist item entity - 1:n relationship with Project
+export interface ChecklistItem {
+  id: string;
+  project_id: string;
+  category: string;
+  description: string;
+  status: string;
+  responsible?: string;
+  due_date?: string;
+  completed_date?: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// User role entity for role-based access control
+export interface UserRoleAssignment {
+  id: string;
+  user_id: string;
+  project_id: string;
+  role: UserRole;
   created_at: string;
   updated_at: string;
 }
