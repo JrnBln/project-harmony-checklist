@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,8 +31,8 @@ export default function ProjectForm() {
     client: "",
     manager: "",
     status: "Geplant",
-    startDate: new Date().toISOString().split("T")[0],
-    endDate: new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString().split("T")[0],
+    startdate: new Date().toISOString().split("T")[0],
+    enddate: new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString().split("T")[0],
     notes: "",
     building_type: undefined,
     construction_year: undefined,
@@ -97,13 +96,11 @@ export default function ProjectForm() {
       let response;
 
       if (projectId) {
-        // Update existing project
         response = await supabase
           .from("projects")
           .update(formData)
           .eq("id", projectId);
       } else {
-        // Create new project
         response = await supabase
           .from("projects")
           .insert([formData])
@@ -120,7 +117,6 @@ export default function ProjectForm() {
       });
 
       if (!projectId && response.data) {
-        // Navigate to the newly created project
         navigate(`/projects/${response.data[0].id}`);
       }
     } catch (error) {
@@ -208,23 +204,23 @@ export default function ProjectForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="startDate">Startdatum</Label>
+              <Label htmlFor="startdate">Startdatum</Label>
               <Input
-                id="startDate"
-                name="startDate"
+                id="startdate"
+                name="startdate"
                 type="date"
-                value={formData.startDate || ""}
+                value={formData.startdate || ""}
                 onChange={handleChange}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="endDate">Enddatum</Label>
+              <Label htmlFor="enddate">Enddatum</Label>
               <Input
-                id="endDate"
-                name="endDate"
+                id="enddate"
+                name="enddate"
                 type="date"
-                value={formData.endDate || ""}
+                value={formData.enddate || ""}
                 onChange={handleChange}
               />
             </div>

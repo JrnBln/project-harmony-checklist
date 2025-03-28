@@ -13,8 +13,8 @@ export interface ProjectExtended {
   id: string;
   name: string;
   status: string;
-  startDate: string;
-  endDate: string;
+  startdate: string; // Changed from startDate to match DB column
+  enddate: string;   // Changed from endDate to match DB column
   manager: string;
   location: string;
   client: string;

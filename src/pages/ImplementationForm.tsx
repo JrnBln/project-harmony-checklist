@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,7 +12,6 @@ import FormProgressBar from "@/components/FormProgressBar";
 import { useFormProgress, FormField } from "@/hooks/useFormProgress";
 import ProjectPhaseNav from "@/components/ProjectPhaseNav";
 
-// Define form fields for progress calculation
 const formFields: FormField[] = [
   { name: "construction_progress_documented" },
   { name: "handover_protocol_file" },
@@ -43,7 +41,6 @@ export default function ImplementationForm() {
     electricity_meter_data: undefined,
   });
 
-  // Calculate form progress
   const progress = useFormProgress(formData, formFields);
 
   useEffect(() => {
@@ -63,7 +60,7 @@ export default function ImplementationForm() {
 
       if (error) throw error;
       if (data) {
-        setProject(data as ProjectExtended);
+        setProject(data as unknown as ProjectExtended);
       }
     } catch (error) {
       console.error("Error fetching project:", error);
@@ -131,7 +128,6 @@ export default function ImplementationForm() {
 
       if (uploadError) throw uploadError;
 
-      // Get the public URL
       const { data: { publicUrl } } = supabase.storage
         .from('project_documents')
         .getPublicUrl(fileName);
@@ -162,7 +158,6 @@ export default function ImplementationForm() {
     setLoading(true);
 
     try {
-      // Check if record already exists
       const { data: existingData } = await supabase
         .from("implementation")
         .select("id")
@@ -172,13 +167,11 @@ export default function ImplementationForm() {
       let response;
 
       if (existingData) {
-        // Update existing record
         response = await supabase
           .from("implementation")
           .update(formData)
           .eq("id", existingData.id);
       } else {
-        // Create new record
         response = await supabase
           .from("implementation")
           .insert([formData])

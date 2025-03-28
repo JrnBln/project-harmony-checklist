@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -84,7 +83,8 @@ export default function SystemDesignForm() {
 
       if (error) throw error;
       if (data) {
-        setProject(data as ProjectExtended);
+        // Use type assertion to safely convert the database response to the ProjectExtended type
+        setProject(data as unknown as ProjectExtended);
       }
     } catch (error) {
       console.error("Error fetching project:", error);
