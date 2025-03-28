@@ -95,6 +95,10 @@ export default function ProjectForm() {
     try {
       let response;
 
+      if (!formData.name) {
+        throw new Error("Projektname ist erforderlich");
+      }
+
       if (projectId) {
         response = await supabase
           .from("projects")
@@ -103,7 +107,7 @@ export default function ProjectForm() {
       } else {
         response = await supabase
           .from("projects")
-          .insert([formData])
+          .insert(formData)
           .select();
       }
 
@@ -123,7 +127,7 @@ export default function ProjectForm() {
       console.error("Error saving project:", error);
       toast({
         title: "Fehler",
-        description: "Projekt konnte nicht gespeichert werden.",
+        description: error instanceof Error ? error.message : "Projekt konnte nicht gespeichert werden.",
         variant: "destructive",
       });
     } finally {
