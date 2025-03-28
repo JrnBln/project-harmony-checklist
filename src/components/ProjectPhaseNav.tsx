@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Clipboard, Wrench, Calculator, HardHat, Activity } from "lucide-react";
 
 interface ProjectPhaseNavProps {
   projectId: string;
@@ -53,14 +53,36 @@ export default function ProjectPhaseNav({ projectId, activePhase }: ProjectPhase
         className="w-full"
       >
         <TabsList className="w-full overflow-x-auto flex-wrap justify-start md:justify-center">
-          <TabsTrigger value="overview">Übersicht</TabsTrigger>
-          <TabsTrigger value="technical">Technik</TabsTrigger>
-          <TabsTrigger value="design">Auslegung</TabsTrigger>
-          <TabsTrigger value="implementation">Umsetzung</TabsTrigger>
-          <TabsTrigger value="operation">Betrieb</TabsTrigger>
-          <TabsTrigger value="checklist">Checkliste</TabsTrigger>
+          <TabsTrigger value="overview" className="flex items-center gap-1">
+            <Clipboard className="h-4 w-4" />
+            <span className="hidden sm:inline">Übersicht</span>
+          </TabsTrigger>
+          <TabsTrigger value="technical" className="flex items-center gap-1">
+            <Wrench className="h-4 w-4" />
+            <span className="hidden sm:inline">Technik</span>
+          </TabsTrigger>
+          <TabsTrigger value="design" className="flex items-center gap-1">
+            <Calculator className="h-4 w-4" />
+            <span className="hidden sm:inline">Auslegung</span>
+          </TabsTrigger>
+          <TabsTrigger value="implementation" className="flex items-center gap-1">
+            <HardHat className="h-4 w-4" />
+            <span className="hidden sm:inline">Umsetzung</span>
+          </TabsTrigger>
+          <TabsTrigger value="operation" className="flex items-center gap-1">
+            <Activity className="h-4 w-4" />
+            <span className="hidden sm:inline">Betrieb</span>
+          </TabsTrigger>
+          <TabsTrigger value="checklist" className="flex items-center gap-1">
+            <Clipboard className="h-4 w-4" />
+            <span className="hidden sm:inline">Checkliste</span>
+          </TabsTrigger>
         </TabsList>
       </Tabs>
+      
+      <div className="mt-2 text-xs text-muted-foreground text-center">
+        VDI 4645 Projektphasen
+      </div>
     </div>
   );
 }

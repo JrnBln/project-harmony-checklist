@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ProjectExtended, BuildingType, RenovationStatus, EnergySource } from "@/types/supabase";
+import ProjectPhaseNav from "@/components/ProjectPhaseNav";
 
 const buildingTypes: BuildingType[] = ["EFH", "MFH", "Gewerbe", "Industrie"];
 const renovationStatuses: RenovationStatus[] = ["unsaniert", "teilsaniert", "vollsaniert"];
@@ -145,211 +146,231 @@ export default function ProjectForm() {
   };
 
   return (
-    <Card className="max-w-3xl mx-auto my-6">
-      <CardHeader>
-        <CardTitle>{projectId ? "Projekt bearbeiten" : "Neues Projekt"}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="grid gap-4">
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Projektname</Label>
-              <Input
-                id="name"
-                name="name"
-                value={formData.name || ""}
-                onChange={handleChange}
-                required
-              />
+    <div className="container mx-auto p-4">
+      {projectId && (
+        <ProjectPhaseNav projectId={projectId} activePhase="overview" />
+      )}
+      
+      <Card className="max-w-3xl mx-auto">
+        <CardHeader>
+          <CardTitle>{projectId ? "Projekt bearbeiten" : "Neues Projekt"}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="grid gap-6">
+            {/* Allgemeine Projektdaten */}
+            <div className="space-y-4">
+              <h3 className="font-medium text-lg">Allgemeine Projektdaten</h3>
+              
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Projektname</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formData.name || ""}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="location">Standort</Label>
+                  <Input
+                    id="location"
+                    name="location"
+                    value={formData.location || ""}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="client">Kunde</Label>
+                  <Input
+                    id="client"
+                    name="client"
+                    value={formData.client || ""}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="manager">Projektleiter</Label>
+                  <Input
+                    id="manager"
+                    name="manager"
+                    value={formData.manager || ""}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Gebäudeinformationen */}
+            <div className="space-y-4">
+              <h3 className="font-medium text-lg">Gebäudeinformationen</h3>
+              
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="building_type">Gebäudetyp</Label>
+                  <Select
+                    value={formData.building_type}
+                    onValueChange={(value) => handleSelectChange("building_type", value)}
+                  >
+                    <SelectTrigger id="building_type">
+                      <SelectValue placeholder="Gebäudetyp wählen" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {buildingTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="construction_year">Baujahr</Label>
+                  <Input
+                    id="construction_year"
+                    name="construction_year"
+                    type="number"
+                    min="1900"
+                    max={new Date().getFullYear()}
+                    value={formData.construction_year || ""}
+                    onChange={handleChange}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="renovation_status">Sanierungsstand</Label>
+                  <Select
+                    value={formData.renovation_status}
+                    onValueChange={(value) => handleSelectChange("renovation_status", value)}
+                  >
+                    <SelectTrigger id="renovation_status">
+                      <SelectValue placeholder="Sanierungsstand wählen" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {renovationStatuses.map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {status}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="previous_energy_source">Energieträger bisher</Label>
+                  <Select
+                    value={formData.previous_energy_source}
+                    onValueChange={(value) => handleSelectChange("previous_energy_source", value)}
+                  >
+                    <SelectTrigger id="previous_energy_source">
+                      <SelectValue placeholder="Energieträger wählen" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {energySources.map((source) => (
+                        <SelectItem key={source} value={source}>
+                          {source}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="project_goal">Projektziel</Label>
+                  <Input
+                    id="project_goal"
+                    name="project_goal"
+                    value={formData.project_goal || ""}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Projektstatus */}
+            <div className="space-y-4">
+              <h3 className="font-medium text-lg">Projektstatus</h3>
+              
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status</Label>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(value) => handleSelectChange("status", value)}
+                  >
+                    <SelectTrigger id="status">
+                      <SelectValue placeholder="Status wählen" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {["Geplant", "In Umsetzung", "Abgeschlossen", "Pausiert"].map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {status}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="startdate">Startdatum</Label>
+                  <Input
+                    id="startdate"
+                    name="startdate"
+                    type="date"
+                    value={formData.startdate || ""}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="enddate">Enddatum</Label>
+                  <Input
+                    id="enddate"
+                    name="enddate"
+                    type="date"
+                    value={formData.enddate || ""}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="location">Standort</Label>
-              <Input
-                id="location"
-                name="location"
-                value={formData.location || ""}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="client">Kunde</Label>
-              <Input
-                id="client"
-                name="client"
-                value={formData.client || ""}
+              <Label htmlFor="notes">Notizen</Label>
+              <Textarea
+                id="notes"
+                name="notes"
+                rows={3}
+                value={formData.notes || ""}
                 onChange={handleChange}
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="manager">Projektleiter</Label>
-              <Input
-                id="manager"
-                name="manager"
-                value={formData.manager || ""}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => handleSelectChange("status", value)}
+            <div className="flex justify-end space-x-2 mt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate(-1)}
+                disabled={loading}
               >
-                <SelectTrigger id="status">
-                  <SelectValue placeholder="Status wählen" />
-                </SelectTrigger>
-                <SelectContent>
-                  {["Geplant", "In Umsetzung", "Abgeschlossen", "Pausiert"].map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                Abbrechen
+              </Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? "Speichern..." : "Speichern"}
+              </Button>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="startdate">Startdatum</Label>
-              <Input
-                id="startdate"
-                name="startdate"
-                type="date"
-                value={formData.startdate || ""}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="enddate">Enddatum</Label>
-              <Input
-                id="enddate"
-                name="enddate"
-                type="date"
-                value={formData.enddate || ""}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="building_type">Gebäudetyp</Label>
-              <Select
-                value={formData.building_type}
-                onValueChange={(value) => handleSelectChange("building_type", value)}
-              >
-                <SelectTrigger id="building_type">
-                  <SelectValue placeholder="Gebäudetyp wählen" />
-                </SelectTrigger>
-                <SelectContent>
-                  {buildingTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="construction_year">Baujahr</Label>
-              <Input
-                id="construction_year"
-                name="construction_year"
-                type="number"
-                min="1900"
-                max={new Date().getFullYear()}
-                value={formData.construction_year || ""}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="renovation_status">Sanierungsstand</Label>
-              <Select
-                value={formData.renovation_status}
-                onValueChange={(value) => handleSelectChange("renovation_status", value)}
-              >
-                <SelectTrigger id="renovation_status">
-                  <SelectValue placeholder="Sanierungsstand wählen" />
-                </SelectTrigger>
-                <SelectContent>
-                  {renovationStatuses.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="previous_energy_source">Energieträger bisher</Label>
-              <Select
-                value={formData.previous_energy_source}
-                onValueChange={(value) => handleSelectChange("previous_energy_source", value)}
-              >
-                <SelectTrigger id="previous_energy_source">
-                  <SelectValue placeholder="Energieträger wählen" />
-                </SelectTrigger>
-                <SelectContent>
-                  {energySources.map((source) => (
-                    <SelectItem key={source} value={source}>
-                      {source}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="project_goal">Projektziel</Label>
-            <Textarea
-              id="project_goal"
-              name="project_goal"
-              rows={3}
-              value={formData.project_goal || ""}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="notes">Notizen</Label>
-            <Textarea
-              id="notes"
-              name="notes"
-              rows={3}
-              value={formData.notes || ""}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="flex justify-end space-x-2 mt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate(-1)}
-              disabled={loading}
-            >
-              Abbrechen
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? "Speichern..." : "Speichern"}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
