@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -95,19 +96,25 @@ export default function ProjectForm() {
     try {
       let response;
 
-      if (!formData.name) {
+      if (!formData.name || formData.name.trim() === '') {
         throw new Error("Projektname ist erforderlich");
       }
+
+      // Create a data object that definitely has the required name field
+      const projectData = {
+        ...formData,
+        name: formData.name // Ensure this is present and not optional
+      };
 
       if (projectId) {
         response = await supabase
           .from("projects")
-          .update(formData)
+          .update(projectData)
           .eq("id", projectId);
       } else {
         response = await supabase
           .from("projects")
-          .insert(formData)
+          .insert([projectData]) // Use array format for insert
           .select();
       }
 
@@ -122,6 +129,8 @@ export default function ProjectForm() {
 
       if (!projectId && response.data) {
         navigate(`/projects/${response.data[0].id}`);
+      } else {
+        navigate(-1);
       }
     } catch (error) {
       console.error("Error saving project:", error);
