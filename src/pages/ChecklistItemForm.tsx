@@ -13,8 +13,14 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { 
+  ChecklistCategory, 
+  ChecklistStatus, 
+  UserRole 
+} from "@/types/models";
+import { useToast } from "@/hooks/use-toast";
 
-const categories = [
+const categories: ChecklistCategory[] = [
   "Projektstart",
   "Planung",
   "Technik",
@@ -25,38 +31,50 @@ const categories = [
   "Betrieb",
 ];
 
-const roles = ["Projektleiter", "Subunternehmer", "Technischer Planer", "Kunde"];
+const roles: UserRole[] = ["Projektleiter", "Subunternehmer", "Technischer Planer", "Kunde"];
 
 export default function ChecklistItemForm() {
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     kategorie: "",
     prüfpunkt: "",
     pflichtfeld: false,
-    status: "Offen",
+    status: "Offen" as ChecklistStatus,
     verantwortlich: "",
     datumGeplant: "",
     datumErledigt: "",
     bemerkungen: "",
   });
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
-  const handleSelectChange = (name, value) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleCheckboxChange = (name: string, checked: boolean) => {
+    setFormData({
+      ...formData,
+      [name]: checked,
+    });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Neuer Checklistenpunkt:", formData);
+    toast({
+      title: "Checklistenpunkt gespeichert",
+      description: "Der neue Checklistenpunkt wurde erfolgreich gespeichert."
+    });
   };
 
   return (
@@ -99,7 +117,7 @@ export default function ChecklistItemForm() {
               id="pflichtfeld"
               checked={formData.pflichtfeld}
               onCheckedChange={(checked) => 
-                handleSelectChange("pflichtfeld", checked === true)
+                handleCheckboxChange("pflichtfeld", checked === true)
               }
             />
             <Label htmlFor="pflichtfeld">Pflichtfeld</Label>
