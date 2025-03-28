@@ -88,8 +88,16 @@ export interface Implementation {
 export interface Operation {
   id: string;
   project_id: string;
-  maintenance_contract_signed: boolean;
+  measured_spf?: number;
+  measured_cop?: number;
+  performance_as_expected?: string;
   monitoring_active: boolean;
+  monitoring_system?: string;
+  remote_access_configured: boolean;
+  maintenance_schedule_set: boolean;
+  next_maintenance_date?: string;
+  maintenance_provider?: string;
+  maintenance_contract_signed?: boolean;
   spf_realized_first_year?: number;
   fault_messages?: string;
   created_at: string;

@@ -51,7 +51,7 @@ export function useOperationForm(projectId: string | undefined) {
   const fetchOperationData = async () => {
     try {
       const { data, error } = await supabase
-        .from('operations')
+        .from('operation')
         .select('*')
         .eq('project_id', projectId)
         .single();
@@ -105,7 +105,7 @@ export function useOperationForm(projectId: string | undefined) {
     try {
       // Check if operation data already exists
       const { data: existingData, error: checkError } = await supabase
-        .from('operations')
+        .from('operation')
         .select('id')
         .eq('project_id', projectId)
         .single();
@@ -122,13 +122,13 @@ export function useOperationForm(projectId: string | undefined) {
       if (existingData) {
         // Update existing record
         result = await supabase
-          .from('operations')
+          .from('operation')
           .update(formData)
           .eq('id', existingData.id);
       } else {
         // Insert new record
         result = await supabase
-          .from('operations')
+          .from('operation')
           .insert(formData);
       }
 
