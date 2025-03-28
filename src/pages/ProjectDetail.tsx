@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import ChecklistItemRow from '@/components/ChecklistItemRow';
 import ProgressRing from '@/components/ProgressRing';
+import ProjectPhaseNav from '@/components/ProjectPhaseNav';
 
 const ProjectDetail: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -85,23 +86,8 @@ const ProjectDetail: React.FC = () => {
   
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Back button and actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-        <Link to="/" className="flex items-center text-muted-foreground hover:text-foreground mb-4 sm:mb-0">
-          <ChevronLeftIcon className="h-5 w-5 mr-1" />
-          Zurück zur Übersicht
-        </Link>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => navigate(`/projects/${projectId}/edit`)}>
-            <EditIcon className="h-4 w-4 mr-2" />
-            Bearbeiten
-          </Button>
-          <Button onClick={() => navigate(`/projects/${projectId}/checklist/new`)}>
-            <PlusCircleIcon className="h-4 w-4 mr-2" />
-            Checklistenpunkt hinzufügen
-          </Button>
-        </div>
-      </div>
+      {/* Project Phase Navigation */}
+      <ProjectPhaseNav projectId={projectId} activePhase="overview" />
       
       {/* Project Header */}
       <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
@@ -151,6 +137,14 @@ const ProjectDetail: React.FC = () => {
           <div className="mt-6 lg:mt-0 lg:ml-6 flex flex-col items-center">
             <ProgressRing progress={project.progress} size={100} strokeWidth={8} />
             <span className="mt-2 text-sm text-muted-foreground">Projektfortschritt</span>
+            <Button 
+              variant="outline" 
+              className="mt-4"
+              onClick={() => navigate(`/projects/${projectId}/edit`)}
+            >
+              <EditIcon className="h-4 w-4 mr-2" />
+              Bearbeiten
+            </Button>
           </div>
         </div>
       </div>

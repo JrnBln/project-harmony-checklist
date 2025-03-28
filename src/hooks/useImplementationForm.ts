@@ -2,7 +2,9 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Implementation, ProjectExtended } from "@/types/supabase";
+import { ProjectExtended, Implementation } from "@/types/supabase";
+import { useFormProgress } from "@/hooks/useFormProgress";
+import { implementationFormFields } from "@/constants/implementationFormFields";
 
 export function useImplementationForm(projectId: string | undefined) {
   const { toast } = useToast();
@@ -19,6 +21,8 @@ export function useImplementationForm(projectId: string | undefined) {
     heat_meter_data: undefined,
     electricity_meter_data: undefined,
   });
+
+  const { calculateProgress } = useFormProgress(implementationFormFields);
 
   useEffect(() => {
     if (projectId) {
@@ -66,7 +70,7 @@ export function useImplementationForm(projectId: string | undefined) {
       console.error("Error fetching implementation data:", error);
       toast({
         title: "Fehler",
-        description: "Umsetzungsdaten konnten nicht geladen werden.",
+        description: "Implementierungsdaten konnten nicht geladen werden.",
         variant: "destructive",
       });
     } finally {
@@ -88,46 +92,6 @@ export function useImplementationForm(projectId: string | undefined) {
       ...formData,
       [name]: checked,
     });
-  };
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, files } = e.target;
-    if (!files || files.length === 0) return;
-
-    const file = files[0];
-    const fileName = `${projectId}/${name}_${Date.now()}`;
-    
-    setLoading(true);
-    try {
-      const { error: uploadError, data } = await supabase.storage
-        .from('project_documents')
-        .upload(fileName, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('project_documents')
-        .getPublicUrl(fileName);
-
-      setFormData({
-        ...formData,
-        [name]: publicUrl,
-      });
-      
-      toast({
-        title: "Erfolg",
-        description: "Datei erfolgreich hochgeladen.",
-      });
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      toast({
-        title: "Fehler",
-        description: "Datei konnte nicht hochgeladen werden.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -157,9 +121,12 @@ export function useImplementationForm(projectId: string | undefined) {
 
       if (response.error) throw response.error;
 
+      // Update project progress in projects table
+      await updateProjectProgress();
+
       toast({
         title: "Erfolg",
-        description: "Umsetzungsdaten erfolgreich gespeichert",
+        description: "Implementierungsdaten erfolgreich gespeichert",
       });
 
       return true;
@@ -167,12 +134,29 @@ export function useImplementationForm(projectId: string | undefined) {
       console.error("Error saving implementation data:", error);
       toast({
         title: "Fehler",
-        description: "Umsetzungsdaten konnten nicht gespeichert werden.",
+        description: "Implementierungsdaten konnten nicht gespeichert werden.",
         variant: "destructive",
       });
       return false;
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updateProjectProgress = async () => {
+    try {
+      // Calculate current progress based on filled fields
+      const progress = calculateProgress(formData);
+      
+      // Update project progress
+      if (projectId && progress > 0) {
+        await supabase
+          .from("projects")
+          .update({ progress })
+          .eq("id", projectId);
+      }
+    } catch (error) {
+      console.error("Error updating project progress:", error);
     }
   };
 
@@ -182,7 +166,7 @@ export function useImplementationForm(projectId: string | undefined) {
     formData,
     handleChange,
     handleCheckboxChange,
-    handleFileChange,
-    handleSubmit
+    handleSubmit,
+    progress: calculateProgress(formData)
   };
 }
