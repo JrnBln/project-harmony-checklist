@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ProjectExtended, Implementation } from "@/types/supabase";
-import { useFormProgress } from "@/hooks/useFormProgress";
+import { useFormProgress, FieldConfig } from "@/hooks/useFormProgress";
 import { implementationFormFields } from "@/constants/implementationFormFields";
 
 export function useImplementationForm(projectId: string | undefined) {
@@ -22,7 +22,8 @@ export function useImplementationForm(projectId: string | undefined) {
     electricity_meter_data: undefined,
   });
 
-  const { calculateProgress } = useFormProgress(implementationFormFields);
+  // Use the proper hook import
+  const progress = useFormProgress(implementationFormFields, formData);
 
   useEffect(() => {
     if (projectId) {
@@ -87,6 +88,20 @@ export function useImplementationForm(projectId: string | undefined) {
     });
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Implement file handling here
+    const { name, files } = e.target;
+    
+    if (files && files.length > 0) {
+      // For now, just store the file name
+      // In a real implementation, you would upload the file to a server
+      setFormData({
+        ...formData,
+        [name]: files[0].name,
+      });
+    }
+  };
+
   const handleCheckboxChange = (name: string, checked: boolean) => {
     setFormData({
       ...formData,
@@ -146,13 +161,12 @@ export function useImplementationForm(projectId: string | undefined) {
   const updateProjectProgress = async () => {
     try {
       // Calculate current progress based on filled fields
-      const progress = calculateProgress(formData);
       
-      // Update project progress
+      // Update project progress if projectId exists and progress is calculated
       if (projectId && progress > 0) {
         await supabase
           .from("projects")
-          .update({ progress })
+          .update({ progress: Math.round(progress) })
           .eq("id", projectId);
       }
     } catch (error) {
@@ -166,7 +180,8 @@ export function useImplementationForm(projectId: string | undefined) {
     formData,
     handleChange,
     handleCheckboxChange,
+    handleFileChange,
     handleSubmit,
-    progress: calculateProgress(formData)
+    progress
   };
 }
