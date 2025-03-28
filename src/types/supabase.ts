@@ -1,4 +1,3 @@
-
 export type BuildingType = 'EFH' | 'MFH' | 'Gewerbe' | 'Industrie';
 export type RenovationStatus = 'unsaniert' | 'teilsaniert' | 'vollsaniert';
 export type EnergySource = 'Gas' | 'Öl' | 'Fernwärme' | 'Strom' | 'Sonstiges';
@@ -43,6 +42,7 @@ export interface TechnicalData {
   indoor_unit_space_available: boolean;
   outdoor_unit_space_available: boolean;
   drill_access?: DrillAccess;
+  notes?: string; // Added notes field
   created_at: string;
   updated_at: string;
 }
