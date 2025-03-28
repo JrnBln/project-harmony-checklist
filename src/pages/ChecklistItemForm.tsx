@@ -3,8 +3,16 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectItem } from "@/components/ui/select";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 const categories = [
   "Projektstart",
@@ -39,6 +47,13 @@ export default function ChecklistItemForm() {
     });
   };
 
+  const handleSelectChange = (name, value) => {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Neuer Checklistenpunkt:", formData);
@@ -47,75 +62,121 @@ export default function ChecklistItemForm() {
   return (
     <Card className="max-w-xl mx-auto my-6">
       <CardContent>
-        <form onSubmit={handleSubmit} className="grid gap-4">
-          <Select name="kategorie" onChange={handleChange} required>
-            {categories.map((cat) => (
-              <SelectItem key={cat} value={cat}>
-                {cat}
-              </SelectItem>
-            ))}
-          </Select>
+        <form onSubmit={handleSubmit} className="grid gap-4 pt-6">
+          <div className="space-y-2">
+            <Label htmlFor="kategorie">Kategorie</Label>
+            <Select
+              value={formData.kategorie}
+              onValueChange={(value) => handleSelectChange("kategorie", value)}
+            >
+              <SelectTrigger id="kategorie">
+                <SelectValue placeholder="Kategorie auswählen" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    {cat}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-          <Input
-            name="prüfpunkt"
-            placeholder="Prüfpunkt eingeben"
-            value={formData.prüfpunkt}
-            onChange={handleChange}
-            required
-          />
+          <div className="space-y-2">
+            <Label htmlFor="prüfpunkt">Prüfpunkt</Label>
+            <Input
+              id="prüfpunkt"
+              name="prüfpunkt"
+              placeholder="Prüfpunkt eingeben"
+              value={formData.prüfpunkt}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              name="pflichtfeld"
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="pflichtfeld"
               checked={formData.pflichtfeld}
+              onCheckedChange={(checked) => 
+                handleSelectChange("pflichtfeld", checked === true)
+              }
+            />
+            <Label htmlFor="pflichtfeld">Pflichtfeld</Label>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="status">Status</Label>
+            <Select
+              value={formData.status}
+              onValueChange={(value) => handleSelectChange("status", value)}
+            >
+              <SelectTrigger id="status">
+                <SelectValue placeholder="Status auswählen" />
+              </SelectTrigger>
+              <SelectContent>
+                {["Offen", "In Bearbeitung", "Erledigt", "Blockiert"].map((status) => (
+                  <SelectItem key={status} value={status}>
+                    {status}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="verantwortlich">Verantwortlich</Label>
+            <Select
+              value={formData.verantwortlich}
+              onValueChange={(value) => handleSelectChange("verantwortlich", value)}
+            >
+              <SelectTrigger id="verantwortlich">
+                <SelectValue placeholder="Verantwortlichen auswählen" />
+              </SelectTrigger>
+              <SelectContent>
+                {roles.map((role) => (
+                  <SelectItem key={role} value={role}>
+                    {role}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="datumGeplant">Geplantes Datum</Label>
+            <Input
+              id="datumGeplant"
+              type="date"
+              name="datumGeplant"
+              value={formData.datumGeplant}
               onChange={handleChange}
             />
-            Pflichtfeld
-          </label>
+          </div>
 
-          <Select name="status" onChange={handleChange} value={formData.status}>
-            {["Offen", "In Bearbeitung", "Erledigt", "Blockiert"].map((status) => (
-              <SelectItem key={status} value={status}>
-                {status}
-              </SelectItem>
-            ))}
-          </Select>
+          <div className="space-y-2">
+            <Label htmlFor="datumErledigt">Datum erledigt</Label>
+            <Input
+              id="datumErledigt"
+              type="date"
+              name="datumErledigt"
+              value={formData.datumErledigt}
+              onChange={handleChange}
+            />
+          </div>
 
-          <Select
-            name="verantwortlich"
-            onChange={handleChange}
-            value={formData.verantwortlich}
-          >
-            {roles.map((role) => (
-              <SelectItem key={role} value={role}>
-                {role}
-              </SelectItem>
-            ))}
-          </Select>
+          <div className="space-y-2">
+            <Label htmlFor="bemerkungen">Bemerkungen</Label>
+            <Textarea
+              id="bemerkungen"
+              name="bemerkungen"
+              placeholder="Zusätzliche Bemerkungen"
+              value={formData.bemerkungen}
+              onChange={handleChange}
+            />
+          </div>
 
-          <Input
-            type="date"
-            name="datumGeplant"
-            value={formData.datumGeplant}
-            onChange={handleChange}
-          />
-
-          <Input
-            type="date"
-            name="datumErledigt"
-            value={formData.datumErledigt}
-            onChange={handleChange}
-          />
-
-          <Textarea
-            name="bemerkungen"
-            placeholder="Zusätzliche Bemerkungen"
-            value={formData.bemerkungen}
-            onChange={handleChange}
-          />
-
-          <Button type="submit">Checklistenpunkt speichern</Button>
+          <Button type="submit" className="mt-4">Checklistenpunkt speichern</Button>
         </form>
       </CardContent>
     </Card>
